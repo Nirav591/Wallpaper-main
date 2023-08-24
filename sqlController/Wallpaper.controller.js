@@ -1,7 +1,4 @@
 const { connection } = require('../config/sql.config');
-const fs = require('fs');
-const formidable = require('formidable');
-const multer = require('multer');
 
 exports.fetchWallPapers = (req, res) => {
   connection.getConnection((err, connection) => {
@@ -12,10 +9,7 @@ exports.fetchWallPapers = (req, res) => {
       connection.release();
 
       if (!err) {
-        res.send(result);
-        fs.writeFile('./myWallpaper.json', JSON.stringify(result), (err) => {
-          if (err) console.log('Error writing file:', err);
-        });
+        res.send(result);     
       } else {
         res.send(err);
       }
@@ -99,7 +93,7 @@ exports.createWallpaper = async (req, res) => {
         connection.release();
 
         if (!err) {
-          res.send('Form data received and saved successfully!');
+          res.send('Wallpaper added successfully!');
         } else {
           res.send(err);
         }

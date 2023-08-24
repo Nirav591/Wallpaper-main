@@ -1,5 +1,4 @@
 const { connection } = require('../config/sql.config');
-const fs = require('fs');
 
 exports.fetchAllSubCategories = (req, res) => {
   connection.getConnection((err, connection) => {
@@ -11,9 +10,7 @@ exports.fetchAllSubCategories = (req, res) => {
 
       if (!err) {
         res.send(result);
-        fs.writeFile('./mySubcategory.json', JSON.stringify(result), (err) => {
-          if (err) console.log('Error writing file:', err);
-        });
+      
       } else {
         res.send(err);
       }
@@ -38,7 +35,7 @@ exports.createSubCategory = (req, res) => {
         connection.release();
 
         if (!err) {
-          res.send('SubCategory data received and saved successfully!');
+          res.send('Sub Category added successfully!');
         } else {
           res.send(err);
         }

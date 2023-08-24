@@ -6,9 +6,10 @@ exports.connection = mysql.createPool({
   password: 't7x?}>rbmCa~we+',
   database: 'wallpaper',
 });
+
 // exports.connection = mysql.createPool({
 //   host: 'localhost',
 //   user: 'root',
 //   password: '',
-//   database: 'wallpaperone',
+//   database: 'wallpaper',
 // });

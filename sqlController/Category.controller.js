@@ -1,5 +1,4 @@
 const { connection } = require('../config/sql.config');
-const fs = require('fs');
 
 exports.fetchAllCategories = (req, res) => {
   connection.getConnection((err, connection) => {
@@ -12,9 +11,7 @@ exports.fetchAllCategories = (req, res) => {
 
       if (!err) {
         res.send(result);
-        fs.writeFile('./myCategory.json', JSON.stringify(result), (err) => {
-          if (err) console.log('Error writing file:', err);
-        });
+      
       } else {
         res.send(err);
       }
@@ -23,10 +20,9 @@ exports.fetchAllCategories = (req, res) => {
 };
 
 exports.createCategory = async (req, res) => {
-  console.log(req.body.category,"cat");
+  console.log(req.body.category);
   const categories = req.body.category ? JSON.parse(req.body.category) : {};
   const image = req.file.buffer;
-console.log("image",image);
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
@@ -38,7 +34,7 @@ console.log("image",image);
         connection.release();
 
         if (!err) {
-          res.send('Category data received and saved successfully!');
+          res.send('Category added successfully!');
         } else {
           res.send(err);
         }

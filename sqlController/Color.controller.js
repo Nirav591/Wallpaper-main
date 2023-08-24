@@ -1,5 +1,4 @@
 const { connection } = require('../config/sql.config');
-const fs = require('fs');
 
 exports.fetchAllColors = (req, res) => {
   connection.getConnection((err, connection) => {
@@ -11,9 +10,7 @@ exports.fetchAllColors = (req, res) => {
 
       if (!err) {
         res.send(result);
-        fs.writeFile('./myColor.json', JSON.stringify(result), (err) => {
-          if (err) console.log('Error writing file:', err);
-        });
+       
       } else {
         res.send(err);
       }
@@ -45,7 +42,7 @@ exports.createColor = (req, res) => {
       connection.release();
 
       if (!err) {
-        res.send(req.body);
+        res.send("Color added successfully!");
       } else {
         res.send(err);
       }
