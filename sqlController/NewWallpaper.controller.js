@@ -1,11 +1,11 @@
 const { connection } = require('../config/sql.config');
 
-exports.fetchWallPapers = (req, res) => {
+exports.fetchNewWallPapers = (req, res) => {
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
 
-    connection.query('SELECT * from wallpaper', (err, result) => {
+    connection.query('SELECT * from new_wallpaper', (err, result) => {
       connection.release();
 
       if (!err) {
@@ -17,12 +17,12 @@ exports.fetchWallPapers = (req, res) => {
   });
 };
 
-exports.fetchWallPaperById = (req, res) => {
+exports.fetchNewWallPaperById = (req, res) => {
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
 
-    connection.query('SELECT * from wallpaper WHERE id = ?', [req.params.id], (err, result) => {
+    connection.query('SELECT * from new_wallpaper WHERE id = ?', [req.params.id], (err, result) => {
       connection.release();
 
       if (!err) {
@@ -34,43 +34,8 @@ exports.fetchWallPaperById = (req, res) => {
   });
 };
 
-exports.filterWallpapers = async (req, res) => {
-  console.log('query', req.query);
-  connection.getConnection(async (err, connection) => {
-    if (err) throw err;
-    try {
-      let query = 'SELECT * FROM wallpaper WHERE 1';
-      const conditions = [];
-      const values = [];
 
-      if (req.query.category) {
-        conditions.push('category LIKE ?');
-        values.push(`%${req.query.category}%`);
-      }
-      if (req.query.wallpaperColor) {
-        conditions.push('wallpaperColor LIKE ?');
-        values.push(`%${req.query.wallpaperColor}%`);
-      }
-      if (req.query.type) {
-        conditions.push('type LIKE ?');
-        values.push(`%${req.query.type}%`);
-      }
-
-      if (conditions.length > 0) {
-        query += ' AND ' + conditions.join(' AND ');
-      }
-
-      const result = await connection.query(query, values);
-      res.status(200).json(result);
-    } catch (err) {
-      res.status(400).json(err);
-    } finally {
-      connection.release();
-    }
-  });
-};
-
-exports.createWallpaper = async (req, res) => {
+exports.createNewWallpaper = async (req, res) => {
   const wallpaper = req.body.wallpaper ? JSON.parse(req.body.wallpaper) : {};
   const { filename } = req.file;
   const imagePath = `uploads/${filename}`;
@@ -79,7 +44,7 @@ exports.createWallpaper = async (req, res) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
     connection.query(
-      'INSERT INTO wallpaper (category, subCategory, type, wallpaperTitle, img, wallpaperTags, wallpaperColor, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO new_wallpaper (category, subCategory, type, wallpaperTitle, img, wallpaperTags, wallpaperColor, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [
         wallpaper.category,
         wallpaper.subCategory,
@@ -94,7 +59,7 @@ exports.createWallpaper = async (req, res) => {
         connection.release();
 
         if (!err) {
-          res.send('Wallpaper added successfully!');
+          res.send('New Wallpaper added successfully!');
         } else {
           res.send(err);
         }
@@ -103,12 +68,12 @@ exports.createWallpaper = async (req, res) => {
   });
 };
 
-exports.deleteWallPaper = async (req, res) => {
+exports.deleteNewWallPaper = async (req, res) => {
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
 
-    connection.query('DELETE FROM wallpaper WHERE id = ?', [req.params.id], (err, result) => {
+    connection.query('DELETE FROM new_wallpaper WHERE id = ?', [req.params.id], (err, result) => {
       connection.release();
 
       if (!err) {
@@ -120,7 +85,7 @@ exports.deleteWallPaper = async (req, res) => {
   });
 };
 
-exports.updateWallPaper = async (req, res) => {
+exports.updateNewWallPaper = async (req, res) => {
   const { wallpaper } = req.body.wallpaper ? JSON.parse(req.body.wallpaper) : {};
   
   connection.getConnection((err, connection) => {
@@ -130,7 +95,7 @@ exports.updateWallPaper = async (req, res) => {
       const {filename} = req.file;
       const imagePath = `uploads/${filename}`;
       connection.query(
-        'UPDATE wallpaper SET category = ?, subCategory = ?, type = ?,wallpaperTitle = ?, img = ?, wallpaperTags = ?, wallpaperColor = ?, status = ? WHERE id = ?',
+        'UPDATE new_wallpaper SET category = ?, subCategory = ?, type = ?,wallpaperTitle = ?, img = ?, wallpaperTags = ?, wallpaperColor = ?, status = ? WHERE id = ?',
         [
           wallpaper.category,
           wallpaper.subCategory,
@@ -154,7 +119,7 @@ exports.updateWallPaper = async (req, res) => {
       );
     } else {
       connection.query(
-        'UPDATE wallpaper SET category = ?, subCategory = ?, type = ?,wallpaperTitle = ?, wallpaperTags = ?, wallpaperColor = ?, status = ? WHERE id = ?',
+        'UPDATE new_wallpaper SET category = ?, subCategory = ?, type = ?,wallpaperTitle = ?, wallpaperTags = ?, wallpaperColor = ?, status = ? WHERE id = ?',
         [
           wallpaper.category,
           wallpaper.subCategory,

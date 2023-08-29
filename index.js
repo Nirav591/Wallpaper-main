@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 
 const wallPaperRoute = require('./sqlRoutes/Wallpaper.route');
@@ -7,6 +8,7 @@ const subCategoriesRoute = require('./sqlRoutes/SubCategory.route');
 const colorRoute = require('./sqlRoutes/Color.route');
 const authRoute = require('./sqlRoutes/Auth.route');
 const userRoute = require('./sqlRoutes/User.route');
+const newWallPaperRoute = require('./sqlRoutes/NewWallpaper.route');
 
 const cors = require('cors');
 
@@ -20,12 +22,14 @@ app.use(
   })
 );
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/auth', authRoute.router);
 app.use('/category', categoriesRoute.router);
 app.use('/subcategory', subCategoriesRoute.router);
 app.use('/wallpaper', wallPaperRoute.router);
 app.use('/color', colorRoute.router);
+app.use('/newWallpaper', newWallPaperRoute.router);
 app.use('/user', userRoute.router);
 
 app.listen(4000, () => {

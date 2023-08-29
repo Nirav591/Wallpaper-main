@@ -19,10 +19,10 @@ exports.fetchAllSubCategories = (req, res) => {
 };
 
 exports.createSubCategory = (req, res) => {
-  console.log(req.body);
   const subcategories = req.body.subcategory ? JSON.parse(req.body.subcategory) : {};
 
-  const image = req.file.buffer;
+  const { filename } = req.file;
+  const imagePath = `uploads/${filename}`;
 
   connection.getConnection((err, connection) => {
     if (err) throw err;
@@ -30,7 +30,7 @@ exports.createSubCategory = (req, res) => {
 
     connection.query(
       'INSERT INTO subcategory (subCategoryName, category, img, status) VALUES (?, ?, ?, ?)',
-      [subcategories.subCategoryName, subcategories.category, image, subcategories.status],
+      [subcategories.subCategoryName, subcategories.category, imagePath, subcategories.status],
       (err, result) => {
         connection.release();
 
@@ -79,14 +79,16 @@ exports.fetchSubCategoryById = (req, res) => {
 
 exports.updateSubCategory = async (req, res) => {
   const { subcategory } = req.body.subcategory ? JSON.parse(req.body.subcategory) : {};
-  const image = req.body.OldImage ? JSON.parse(req.body.OldImage).data : req.file.buffer;
+  
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
     if (!req.body.OldImage) {
+      const {filename} = req.file;
+      const imagePath = `uploads/${filename}`;
       connection.query(
         'UPDATE subcategory SET subCategoryName = ?, category = ?, img = ?, status = ? WHERE id = ?',
-        [subcategory.subCategoryName, subcategory.category, image, subcategory.status, req.params.id],
+        [subcategory.subCategoryName, subcategory.category, imagePath, subcategory.status, req.params.id],
         (err, result) => {
           connection.release();
 

@@ -7,8 +7,6 @@ exports.fetchAllCategories = (req, res) => {
     console.log(`Connection as id ${connection.threadId}`);
 
     connection.query('SELECT * from category', (err, result) => {
-      
-
       if (!err) {
         res.send(result);
       
@@ -22,14 +20,16 @@ exports.fetchAllCategories = (req, res) => {
 exports.createCategory = async (req, res) => {
   console.log(req.body.category);
   const categories = req.body.category ? JSON.parse(req.body.category) : {};
-  const image = req.file.buffer;
+  const { filename } = req.file;
+  const imagePath = `uploads/${filename}`;
+
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
 
     connection.query(
       'INSERT INTO category (categoryName, img, status) VALUES (?, ?, ?)',
-      [categories.categoryName, image, categories.status],
+      [categories.categoryName, imagePath, categories.status],
       (err, result) => {
         connection.release();
 
@@ -78,15 +78,16 @@ exports.fetchCategoryById = (req, res) => {
 
 exports.updateCategory = async (req, res) => {
   const { category } = req.body.category ? JSON.parse(req.body.category) : {};
-  const image = req.body.OldImage ? JSON.parse(req.body.OldImage).data : req.file.buffer;
-
+  
   connection.getConnection((err, connection) => {
     if (err) throw err;
     console.log(`Connection as id ${connection.threadId}`);
     if (!req.body.OldImage) {
+      const {filename} = req.file;
+      const imagePath = `uploads/${filename}`;
       connection.query(
         'UPDATE category SET categoryName = ?, img = ?, status = ? WHERE id = ?',
-        [category.categoryName, image, category.status, req.params.id],
+        [category.categoryName, imagePath, category.status, req.params.id],
         (err, result) => {
           connection.release();
 
